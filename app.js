@@ -22,13 +22,14 @@ const getContent = function(url) {
 };
 
 var resultCount=0;
-var results = [];
 
 function getPage(p) {
   getContent('http://beta.charitycommission.gov.uk/charity-search/?q=&onlyShow=Up-to-date&p=' + p + '&classification1=Accommodation/housing').then(function(data) {
     var $ = cheerio.load(data);
     var total = parseInt($('.result-count').text());
-/*    console.log(total); */
+    if (resultCount == 0) {
+      console.log('<h1>Total number of Accommodation/housing charities: ' + total + '</h1>');
+    };
     var pageList = $('.results-list li').length;
 /*    console.log(pageList); */
     resultCount+=pageList;
@@ -36,7 +37,7 @@ function getPage(p) {
 /*      var charity = {charityId: parseInt($( this ).children('p').text()), charityName: $( this ).children('h3').text()};
       console.log( p + ' - ' + index + ": " + charity.charityId + ':' + charity.charityName);
       results.push(charity); */
-      console.log('<a href="http://beta.charitycommission.gov.uk/charity-details/?regid=' + parseInt($( this ).children('p').text()) + '&subid=0" >' + $( this ).children('h3').text() + '</a>')
+      console.log('<p><a href="http://beta.charitycommission.gov.uk/charity-details/?regid=' + parseInt($( this ).children('p').text()) + '&subid=0" >' + $( this ).children('h3').text() + '</a>')
     });
     if (resultCount < total) {
       getPage(p+1);
