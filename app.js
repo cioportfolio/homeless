@@ -24,11 +24,11 @@ const getContent = function(url) {
 var resultCount=0;
 
 function getPage(p) {
-  getContent('http://beta.charitycommission.gov.uk/charity-search/?q=&onlyShow=Up-to-date&p=' + p + '&classification1=Accommodation/housing').then(function(data) {
+  getContent('http://beta.charitycommission.gov.uk/charity-search/?q=&onlyShow=Up-to-date&aood=England+or+Wales&aood=SCOTLAND&aood=NORTHERN+IRELAND&p=' + p + '&classification1=Accommodation/housing&classification2=Children%2Fyoung+people').then(function(data) {
     var $ = cheerio.load(data);
     var total = parseInt($('.result-count').text());
     if (resultCount == 0) {
-      console.log('<h1>Total number of Accommodation/housing charities: ' + total + '</h1>');
+      console.log('<h1>Total number of Accommodation/housing charities helping Children&young people in the UK: ' + total + '</h1>');
     };
     var pageList = $('.results-list li').length;
 /*    console.log(pageList); */
