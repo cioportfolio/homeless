@@ -23,7 +23,26 @@ const getContent = function(url) {
 };
 
 var resultCount=0;
-/* process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; */
+
+function getField(DOM, fieldName) {
+  var $ = DOM;
+  return $('.mainContent .row h4').filter(function(i, el) {
+      // this === el 
+      return $(this).text().toUpperCase().includes(fieldName.toUpperCase());
+    }).next();
+}
+
+function getRow(url) {
+  return getContent(url).then(function(data) {
+    var $ = cheerio.load(data);
+    var serviceName = $('.mainContent .row h1').text();
+    var phoneNumber = getField($, 'Phone').text();
+    var emailAddress = getField($, 'Email').text();
+    var postTown = getField($, 'Address').contents().eq(-3).text();
+
+    return {url: url, serviceName: serviceName, phoneNumber: phoneNumber, emailAddress: emailAddress, postTown: postTown};
+  })
+}
 
 function getPage(p) {
   return getContent('http://www.homeless.org.uk/homeless-england/search?search_api_views_fulltext=&field_homeless_link_member=All&page=' + p).then(function(data) {
@@ -42,7 +61,11 @@ function getPage(p) {
 /*    console.log(pageList); */
     resultCount+=pageList;
     $('.listings li h3').each(function( index ) {
-      console.log('<p><a href="http://www.homeless.org.uk' + $( this ).children('a').attr('href') + '">' + $( this ).text() + '</a>')
+      getRow('http://www.homeless.org.uk' + $( this ).children('a').attr('href')).then(function (data) {
+        if (data.postTown.toUpperCase() === 'LONDON') {
+          console.log('<p><a href="' + data.url + '">' + data.serviceName + '</a> Phone : ' + data.phoneNumber + ' Email : ' + data.emailAddress + ' Town : ' + data.postTown);
+        }
+      })
     });
     if (resultCount < total) {
       getPage(p+1);
