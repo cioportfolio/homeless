@@ -6,46 +6,23 @@ const getContent = function(url) {
   // return new pending promise
   return new Promise((resolve, reject) => {
     // select http or https module, depending on reqested url
-    const lib = url.startsWith('https') ? require('https') : require('http');
+    const lib = require('request');
 
-    const request = lib.get(url, (response) => {
+    const request = lib(url, (err, response, body) => {
       // handle http errors
+      if (err) {
+         reject(err);
+      }
       if (response.statusCode < 200 || response.statusCode > 299) {
          reject(new Error('Failed to load page, status code: ' + response.statusCode));
-       }
+      }
       // temporary data holder
-      const body = [];
-      // on every content chunk, push it to the data array
-      response.on('data', (chunk) => body.push(chunk));
-      // we are done, resolve promise with those joined chunks
-      response.on('end', () => resolve(body.join('')));
+      resolve(body);
     });
-    // handle connection errors of the request
-    request.on('error', (err) => reject(err))
-    });
+  });
 };
 
-function getField(DOM, fieldName) {
-  var $ = DOM;
-  return $('.mainContent .row h4').filter(function(i, el) {
-      // this === el 
-      return $(this).text().toUpperCase().includes(fieldName.toUpperCase());
-    }).next();
-}
-
-function getRow(url) {
-  return getContent(url).then(function(data) {
-    var $ = cheerio.load(data);
-    var serviceName = $('.mainContent .row h1').text();
-    var phoneNumber = getField($, 'Phone').text();
-    var emailAddress = getField($, 'Email').text();
-    var postTown = getField($, 'Address').contents().eq(-3).text();
-
-    return {url: url, serviceName: serviceName, phoneNumber: phoneNumber, emailAddress: emailAddress, postTown: postTown};
-  });
-}
-
-var getRates = getContent('https://lha-direct.voa.gov.uk/SearchResults.aspx?Postcode=' + encodeURIComponent(postCode) + '&LHACategory=0&Month=6&Year=2017&SearchPageParameters=true').then(function(data) {
+var getSHR = getContent('https://lha-direct.voa.gov.uk/SearchResults.aspx?Postcode=' + encodeURIComponent(postCode) + '&LHACategory=0&Month=6&Year=2017&SearchPageParameters=true').then(function(data) {
     var $ = cheerio.load(data);
     var rateTotal = 0;
     var rateCount = $('.brma-rates dd').length;
@@ -56,12 +33,29 @@ var getRates = getContent('https://lha-direct.voa.gov.uk/SearchResults.aspx?Post
       console.log($( this ).text());
       rateTotal += parseFloat($( this ).text().match(/[\d\.]+/));
     });
+    return rateTotal/rateCount * 52 / 12;
+
+  }, function (err) {
+    console.error(err);
+  });
+
+var getRents = getContent('https://www.spareroom.co.uk/flatshare/search.pl?flatshare_type=offered&location_type=area&search=' + encodeURIComponent(postCode) + '&miles_from_max=0&showme_rooms=Y&showme_1beds=Y&showme_buddyup_properties=Y&searchtype=simple&editing=&mode=&nmsq_mode=&action=search&templateoveride=&show_results=&submit=').then(function(data) {
+    var $ = cheerio.load(data);
+    var rateTotal = 0;
+    var rateCount = $('.listingPrice').length;
+    if (rateCount === 0) {
+      return 0;
+    }
+    $('.listingPrice').each(function( index ) {
+      console.log($( this ).text());
+      rateTotal += parseFloat($( this ).text().match(/[\d\.]+/));
+    });
     return rateTotal/rateCount;
 
   }, function (err) {
     console.error(err);
   });
 
-getRates.then(function (data) {
-  console.log('Average rate: ', data);
+Promise.all([getRents, getSHR]).then(function (data) {
+  console.log('Area: ' + postCode + ' Average SHR: ', data[1], ' pcm and average rents (SpareRoom): ', data[0], ' pcm');
 });
