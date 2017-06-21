@@ -5,3 +5,5 @@
 [Full list of services maintained by homeless link](HomelessServices.html)
 
 [Contact details for London services in the homeless link list](LondonServiceDetails.html)
+
+[Sample of rent and allowance comparisons](rents.csvsample)
