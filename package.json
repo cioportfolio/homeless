@@ -11,6 +11,7 @@
   "dependencies": {
     "charity-commission-api": "~1.16.0",
     "cheerio": "^0.22.0",
+    "csvtojson": "^1.1.7",
     "minimist": "^1.2.0",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4"
