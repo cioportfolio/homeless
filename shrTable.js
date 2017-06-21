@@ -1,5 +1,10 @@
 const cheerio = require("cheerio");
+var argv = require('minimist')(process.argv.slice(2));
+var output = argv._[0];
 var Converter = require('csvtojson').Converter;
+
+var output = 'csv';
+if (argv.h) { output = 'html';}
 
 const getContent = function(url) {
   // return new pending promise
@@ -85,15 +90,27 @@ converter.on("record_parsed", function(resultRow, rawRow, rowIndex) {
 });
 
 function startTable () {
-  console.log('Postcode, Average SHR, Average Rent (SpareRoom)');
+  var text = 'Postcode, Average SHR, Average Rent (SpareRoom)';
+  if (output == 'html') {
+    text = '<table><tr><th>Postcode</th><th>Average SHR</th><th>Average Rent (SpareRoom)</th></tr>';
+  }
+  console.log(text);
 }
 
 function tableRow (data) {
-  console.log(data.postcode + ',' + data.SHR + ',' + data.Rent);
+  var text = data.postcode + ',' + data.SHR + ',' + data.Rent;
+  if (output == 'html') {
+    text = '<tr><td>' + data.postcode + '</td><td>' + data.SHR + '</td><td>' + data.Rent + '</td></tr>';
+  }
+  console.log(text);
 }
 
 function endTable () {
-  console.log("Postcodes file processed");
+  var text = "Postcodes file processed";
+  if (output == 'html') {
+    text = '</table>';
+  }
+  console.log(text);
 }
 
 startTable();
