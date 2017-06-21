@@ -6,4 +6,4 @@ This is a collection of quick hacks to extract data from sites which do not prov
 * Rents and housing allowances `$ node shrScrape.js 'some postcode'`
 
 ## Installation
-Install node.js, clone this repo and run `$ npm install'
+Install node.js, clone this repo and run `$ npm install`
