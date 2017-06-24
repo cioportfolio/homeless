@@ -76,9 +76,9 @@ function getPage(p) {
         console.log('"' + data.serviceName + '","' + data.url + '","' + data.phoneNumber + '","' + data.emailAddress + '","' + data.postAddress + '","' + data.whoHelp + '","' + data.notHelp + '"');
       });
     });
-    /*if ($('.pager-last').length > 0) {
+    if ($('.pager-last').length > 0) {
       getPage(p+1);
-    };*/
+    };
   }, function (err) {
     console.error(err);
   });
