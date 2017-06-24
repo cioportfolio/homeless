@@ -38,7 +38,7 @@ function getRow(url) {
     var serviceName = $('.mainContent .row h1').text();
     var phoneNumber = getField($, 'Phone').text();
     var emailAddress = getField($, 'Email').html();
-    var postAddress = getField($, 'Address').html();
+    var postAddress = getField($, 'Address').text();
     var whoHelp = getField($,'Who do we help').text();
     var notHelp = getField($,'Who we cannot help').text();
 
@@ -84,7 +84,7 @@ function getPage(p) {
   });
 };
 
-console.log('serviceName','url','phoneNumber','emailAddress','postAddress','whoHelp','notHelp');
+console.log('serviceName,url,phoneNumber,emailAddress,postAddress,whoHelp,notHelp');
 
 getPage(0);
 
