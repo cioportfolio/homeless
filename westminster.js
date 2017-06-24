@@ -73,7 +73,7 @@ function getPage(p) {
           console.log('<p>' + data.whoHelp);
           console.log('<p>Who we cannot help');
           console.log('<p>' + data.notHelp); */         
-        console.log(data.serviceName,data.url,data.phoneNumber,data.emailAddress,data.postAddress,data.whoHelp,data.notHelp);
+        console.log('"' + data.serviceName + '","' + data.url + '","' + data.phoneNumber + '","' + data.emailAddress + '","' + data.postAddress + '","' + data.whoHelp + '","' + data.notHelp + '"');
       });
     });
     /*if ($('.pager-last').length > 0) {
